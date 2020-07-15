@@ -35,7 +35,7 @@ class Apitome::DocsController < Object.const_get(Apitome.configuration.parent_co
   private
 
   def file_for(file, readme: false)
-    if Apitome.configuration.remote_docs
+    if Apitome.configuration.remote_url
       file = if readme
         "#{file}"
       else
