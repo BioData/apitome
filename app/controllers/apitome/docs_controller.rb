@@ -34,17 +34,22 @@ class Apitome::DocsController < Object.const_get(Apitome.configuration.parent_co
 
   private
 
-    def file_for(file, readme: false)
-      if Apitome.configuration.remote_url
-        file = readme ? file : "#{Apitome.configuration.doc_path}/#{file}"
-        file = CGI.escape("#{Apitome.configuration.remote_url}/#{file}")
+  def file_for(file, readme: false)
+    if Apitome.configuration.remote_docs
+      file = if readme
+        "#{file}"
       else
-        file = Apitome.configuration.root.join(Apitome.configuration.doc_path, file)
-        raise Apitome::FileNotFoundError.new("Unable to find #{file}") unless File.exist?(file)
+        "#{Apitome.configuration.doc_path}/#{file}"
       end
 
-      open(file, file_opts).read
+      file = "#{Apitome.configuration.remote_url}/#{file}"
+    else
+      file = Apitome.configuration.root.join(Apitome.configuration.doc_path, file)
+      raise Apitome::FileNotFoundError.new("Unable to find #{file}") unless File.exists?(file)
     end
+
+    open(file).read
+  end
 
     def resources
       @resources ||= JSON.parse(file_for("index.json"))["resources"]
